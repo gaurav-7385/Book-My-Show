@@ -1,0 +1,26 @@
+# Render Blueprint: deploys the API server.
+# Render dashboard -> New -> Blueprint -> pick this repo.
+services:
+  - type: web
+    name: showspot-api
+    runtime: node
+    plan: free
+    rootDir: server
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "20"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: SEAT_HOLD_SECONDS
+        value: "300"
+      - key: DATABASE_URL
+        sync: false   # paste your Neon connection string
+      - key: REDIS_URL
+        sync: false   # paste your Upstash rediss:// URL
+      - key: CLIENT_ORIGIN
+        sync: false   # your Vercel URL, e.g. https://showspot.vercel.app

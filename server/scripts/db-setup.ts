@@ -1,9 +1,11 @@
-// Creates all tables and loads demo data.
-// Run: npm run db:setup
+// Creates all tables and loads demo data. WARNING: deletes existing data.
+// Local:      npm run db:setup
+// Production: DATABASE_URL="<your Neon URL>" npm run db:setup
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { pool } from '../src/db.js';
+import { fillUpcomingShows } from '../src/services/showScheduler.js';
 
 const dir = path.dirname(fileURLToPath(import.meta.url));
 
@@ -13,8 +15,8 @@ async function main() {
     await pool.query(sql);
     console.log(`✔ ran ${file}`);
   }
-  const { rows } = await pool.query('SELECT count(*)::int AS n FROM shows');
-  console.log(`✔ database ready (${rows[0].n} shows)`);
+  const added = await fillUpcomingShows();
+  console.log(`✔ database ready (${added} shows)`);
   await pool.end();
 }
 

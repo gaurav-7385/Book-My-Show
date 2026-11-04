@@ -12,6 +12,14 @@ export default function Home() {
   const [language, setLanguage] = useState('All');
   const [query, setQuery] = useState('');
   const [error, setError] = useState('');
+  const [slow, setSlow] = useState(false);
+
+  // Free hosting puts the server to sleep. If the first load is slow, say why.
+  useEffect(() => {
+    if (movies) return;
+    const t = setTimeout(() => setSlow(true), 4000);
+    return () => clearTimeout(t);
+  }, [movies]);
 
   useEffect(() => {
     setMovies(null);
@@ -49,7 +57,7 @@ export default function Home() {
   if (error) {
     return (
       <div className="page">
-        <p className="notice">Couldn't load movies: {error}. Check that the API server is running on port 4000.</p>
+        <p className="notice">Couldn't load movies: {error}. Refresh the page to try again.</p>
       </div>
     );
   }
@@ -117,6 +125,9 @@ export default function Home() {
           ))}
         </div>
 
+        {!movies && slow && (
+          <p className="notice">Waking up the server. On free hosting this can take up to a minute the first time.</p>
+        )}
         {!movies && <div className="movie-grid">{Array.from({ length: 5 }, (_, i) => <div key={i} className="poster skeleton" />)}</div>}
         {movies && visible.length === 0 && (
           <p className="notice">No movies match. Try another language or clear the search.</p>

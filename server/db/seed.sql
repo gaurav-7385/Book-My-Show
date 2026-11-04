@@ -27,10 +27,5 @@ SELECT s.id, chr(64 + r), n,
        CASE WHEN r <= 6 THEN 'REGULAR' WHEN r <= 9 THEN 'PREMIUM' ELSE 'RECLINER' END
 FROM screens s, generate_series(1, 10) r, generate_series(1, 12) n;
 
--- 4 shows per screen per day, for the next 4 days
-INSERT INTO shows (movie_id, screen_id, starts_at, price)
-SELECT ((sc.id + slot + d) % 6) + 1,
-       sc.id,
-       (current_date + d) + time '10:00' + slot * interval '3 hours 30 minutes',
-       CASE slot WHEN 3 THEN 250 WHEN 2 THEN 220 ELSE 180 END
-FROM screens sc, generate_series(0, 3) d, generate_series(0, 3) slot;
+-- Shows are not created here. The server fills the next 4 days of shows
+-- on start-up and every 6 hours (see src/services/showScheduler.ts).

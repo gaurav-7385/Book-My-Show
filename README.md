@@ -5,6 +5,8 @@ ticketing: **many people trying to book the same seat at the same time.**
 
 **Stack:** React + TypeScript (Vite) · Node.js + Express (TypeScript) · PostgreSQL · Redis · Docker
 
+**Live demo:** _coming soon_ (first load may take ~1 min while the free server wakes up)
+
 ---
 
 ## ✨ Features
@@ -68,6 +70,27 @@ create the database (`createdb bookmyshow`), then set in `server/.env`:
 
 Tip: open the same show in two browsers with two accounts to watch seat locking live.
 
+## ☁️ Deploy (all free plans)
+
+| Part | Service |
+|---|---|
+| Frontend | Vercel |
+| API server | Render |
+| PostgreSQL | Neon |
+| Redis | Upstash |
+
+1. **Neon:** create a project, copy the connection string.
+2. **Upstash:** create a Redis database, copy the `rediss://...` URL.
+3. **Load demo data into Neon** (from your laptop):
+   `cd server && DATABASE_URL="<neon url>" npm run db:setup`
+4. **Render:** New → Blueprint → pick this repo (uses `render.yaml`).
+   Fill `DATABASE_URL`, `REDIS_URL`, and `CLIENT_ORIGIN` (your Vercel URL).
+5. **Vercel:** import the repo, set **Root Directory** to `client`,
+   add env var `VITE_API_URL=https://<your-render-app>.onrender.com/api`.
+6. Put the Vercel URL into Render's `CLIENT_ORIGIN` and redeploy.
+
+The server keeps the next 4 days of shows filled in automatically, so the demo never runs out of showtimes.
+
 ## 📡 API
 
 | Method | Path | Auth | What |
@@ -91,4 +114,5 @@ Tip: open the same show in two browsers with two accounts to watch seat locking 
 - [ ] Phase 4 — Redis caching for movie lists, rate limiting
 - [ ] Phase 5 — Admin panel (add movies, shows, see sales)
 - [ ] Phase 6 — Booking queue for big releases (BullMQ), load test with k6
-- [ ] Phase 7 — Deploy (Docker + Render/Railway), CI with GitHub Actions
+- [x] Phase 7a — Deploy (Vercel + Render + Neon + Upstash)
+- [ ] Phase 7b — CI with GitHub Actions

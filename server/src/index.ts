@@ -7,10 +7,11 @@ import { authRouter } from './routes/auth.js';
 import { moviesRouter } from './routes/movies.js';
 import { showsRouter } from './routes/shows.js';
 import { bookingsRouter } from './routes/bookings.js';
+import { startShowScheduler } from './services/showScheduler.js';
 
 const app = express();
 
-app.use(cors({ origin: config.clientOrigin }));
+app.use(cors({ origin: config.clientOrigins }));
 app.use(express.json());
 app.use(attachUser);
 
@@ -27,4 +28,5 @@ app.use(errorHandler);
 
 app.listen(config.port, () => {
   console.log(`🎬 ShowSpot API running on http://localhost:${config.port}`);
+  startShowScheduler();
 });
