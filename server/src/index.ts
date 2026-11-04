@@ -8,6 +8,7 @@ import { moviesRouter } from './routes/movies.js';
 import { showsRouter } from './routes/shows.js';
 import { bookingsRouter } from './routes/bookings.js';
 import { startShowScheduler } from './services/showScheduler.js';
+import { setupIfEmpty } from './services/autoSetup.js';
 
 const app = express();
 
@@ -26,7 +27,12 @@ app.use('/api', bookingsRouter);
 
 app.use(errorHandler);
 
-app.listen(config.port, () => {
+app.listen(config.port, async () => {
   console.log(`🎬 ShowSpot API running on http://localhost:${config.port}`);
+  try {
+    await setupIfEmpty();
+  } catch (err) {
+    console.error('Database setup failed:', (err as Error).message);
+  }
   startShowScheduler();
 });
